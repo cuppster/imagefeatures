@@ -24,6 +24,10 @@ Run the tests
     $ cd imagefeatures
     $ python -m tests.features
     
+Install
+
+    $ python setup.py install
+    
     
 Documentation
 -------------
