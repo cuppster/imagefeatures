@@ -1,101 +1,70 @@
-from . import FeaturePlugin
 from collections import namedtuple
-from numpy.core.fromnumeric import reshape
-from scipy.misc import imresize
-import scipy.ndimage as nd
 import numpy as np
-import sys
-#from scipy.fftpack import dct
+from numpy.core.fromnumeric import reshape
+from skimage.filter import sobel, hsobel, vsobel
+from skimage.feature import corner_harris, corner_subpix, corner_peaks
+from imagefeatures.plugins import FeaturePlugin
 
-#
-# width/height ratio
-#
 @FeaturePlugin.register('whratio')
 def whratio(provider):
+    """
+    width/height ratio
+    """
     
     # this works for RGB or GRAYSCALE
     ly, lx = provider.img.shape[:2]
     return 1.0 * lx / ly
 
-
-#
-# sobel GM
-#
 @FeaturePlugin.register('sobelgm')
 def sobelgm(provider):
     """
     mean sobel gradient magnitude
+    """
+    gray = provider.as_gray()
+    mag = sobel(gray)
+    mag *= 100.0 / np.max(mag)
 
-    see: http://stackoverflow.com/questions/7185655/applying-the-sobel-filter-using-scipy
+    return np.mean(mag)
+
+@FeaturePlugin.register('sobelh')
+def sobelh(provider):
+    """
+    sobel horizontal
+    """
+    gray = provider.as_gray()
+    dx = hsobel(gray)  # horizontal derivative
+
+    return np.mean(dx)
+
+@FeaturePlugin.register('sobelv')
+def sobelv(provider):
+    """
+    sobel vertical
+    """
+    gray = provider.as_gray()
+    dy = vsobel(gray)  # vertical derivative
+
+    return np.mean(dy)
+
+@FeaturePlugin.register('sobeld')
+def sobeld(provider):
+    """
+    sobel mean direction
     """
     gray = provider.as_gray()
 
-    #print "gray im", im
-    dx = nd.sobel(gray, 0)  # horizontal derivative
-    dy = nd.sobel(gray, 1)  # vertical derivative
-    mag = np.hypot(dx, dy)  # magnitude
-    mag *= 100.0 / np.max(mag)
-
-    #sys.exit(1)
-    return np.mean(mag)
-
-#
-# sobel horizontal
-#
-@FeaturePlugin.register('sobelh')
-def sobelh(provider):
-
-    gray = provider.as_gray()
-
-    # see: http://stackoverflow.com/questions/7185655/applying-the-sobel-filter-using-scipy
-    im = gray.astype('int32')
-    dx = nd.sobel(im, 0)  # horizontal derivative
-
-    #mag = 100.0 / np.max(dx)  # normalize (Q&D)
-
-    return 100.0 * np.mean(dx)
-
-#
-# sobel horizontal
-#
-@FeaturePlugin.register('sobelv')
-def sobelv(provider):
-
-    gray = provider.as_gray()
-
-    # see: http://stackoverflow.com/questions/7185655/applying-the-sobel-filter-using-scipy
-    im = gray.astype('int32')
-    dy = nd.sobel(im, 1)  # horizontal derivative
-
-    #mag = 100.0 / np.max(dx)  # normalize (Q&D)
-
-    return 100.0 * np.mean(dy)
-
-#
-# sobel direction
-#
-@FeaturePlugin.register('sobeld')
-def sobeld(provider):
-
-    gray = provider.as_gray()
-
-    # see: http://stackoverflow.com/questions/7185655/applying-the-sobel-filter-using-scipy
-    im = gray.astype('int32')
-    dx = nd.sobel(im, 0)  # horizontal derivative
-    dy = nd.sobel(im, 1)  # horizontal derivative
+    dx = hsobel(gray) # horizontal derivative
+    dy = vsobel(gray) # vertical derivative
 
     dirs = np.arctan2(dy, dx)
 
-    return 100.0 * np.mean(dirs)
+    return np.mean(dirs)
 
-#
-# corners
-#
 @FeaturePlugin.register('corners')
 def corners(provider):
-
-    from skimage.feature import corner_harris, corner_subpix, corner_peaks
-    #from skimage.feature import corner_harris
+    """
+    number of corners
+    """
 
     gray = provider.as_gray()
 
@@ -105,14 +74,13 @@ def corners(provider):
 
     return len(coords_subpix)
 
-#
-# colorfulness
-#
 @FeaturePlugin.register('colorfulness')
 def colorfulness(provider):
-    '''
-    colorfulness (0,3.2)
-    '''
+    """
+    colorfulness
+
+    see: TODO
+    """
 
     img = provider.img
     s = img.shape
@@ -130,10 +98,6 @@ def colorfulness(provider):
 
     return sd_rgyb + 3.0 * m_rgyb
 
-
-#
-# entropy
-#
 @FeaturePlugin.register('entropy_v')
 def entropy_v(provider):
     """
@@ -156,7 +120,6 @@ def entropy_s(provider):
         return _entropy_s(hsv)
     else:
         return None
-
 
 @FeaturePlugin.register('entropy')
 def entropy(provider):
@@ -182,7 +145,6 @@ def entropy_sv(provider):
     else:
         return None
 
-
 @FeaturePlugin.register('entropy_ab')
 def entropy_ab(provider):
     """
@@ -200,15 +162,14 @@ def entropy_ab(provider):
     else:
         return None
 
-#
-# emotion
-#
-Emotion = namedtuple('Emotion', 'pleasure arousal dominance')
 
+Emotion = namedtuple('Emotion', 'pleasure arousal dominance')
 @FeaturePlugin.register('emotion', Emotion)
 def emotion(provider):
     """
-    pleasure, arousal, dominance
+    emotion: pleasure, arousal, dominance
+
+    see: TODO
     """
     hsv = provider.as_hsv()
 
@@ -217,20 +178,13 @@ def emotion(provider):
 
     return (0.69 * val + 0.22 * sat, -0.31 * val + 0.60 * sat, -0.76 * val + 0.32 * sat)
 
-
-
-
-#
-# naturalness
-#
 Naturalness = namedtuple('Naturalness', 'naturalness skin grass sky')
-
 @FeaturePlugin.register('naturalness', Naturalness)
 def naturalness(provider):
     """
     naturalness, skin, grass, sky
 
-    http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.108.2839&rep=rep1&type=pdf
+    see: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.108.2839&rep=rep1&type=pdf
     """
     hsv = provider.as_hsv()
 
@@ -264,11 +218,8 @@ def naturalness(provider):
 
     return (cni_image, cni_skin, cni_grass, cni_sky)
 
-
-# entropy
 def entropy(img):
     """
-
     entropy for a single channel
 
     http://en.wikipedia.org/wiki/Entropy_estimation#Histogram_estimator
@@ -290,7 +241,6 @@ def entropy(img):
     # calc entropy
     return -np.sum(prob * np.log2(prob))
 
-# entropy
 def _entropy_s(hsvimg):
     """
     compute entropy values for the Saturation and Value components of a HVS image
@@ -301,7 +251,6 @@ def _entropy_s(hsvimg):
 
     return entropy(sat)
 
-# entropy
 def _entropy_v(hsvimg):
     """
     compute entropy values for the Saturation and Value components of a HVS image
@@ -311,7 +260,6 @@ def _entropy_v(hsvimg):
     val = hsvimg[...,2]
 
     return entropy(val)
-
 
 def _entropy_rgb(img):
     """
