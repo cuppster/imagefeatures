@@ -83,8 +83,11 @@ def colorfulness(provider):
     """
 
     img = provider.img
+    if 3 != img.ndim:
+        return None
+
     s = img.shape
-    len = s[0]*s[1]
+    len = s[0] * s[1]
 
     r = reshape(img[...,0] , (len,)) / 255.0
     g = reshape(img[...,1] , (len,)) / 255.0
@@ -103,6 +106,9 @@ def entropy_v(provider):
     """
     entropy of the value channel in HSV space
     """
+    if 3 != provider.img.ndim:
+        return None
+
     hsv = provider.as_hsv()
     if 3 == hsv.ndim:
         return _entropy_v(hsv)
@@ -115,6 +121,9 @@ def entropy_s(provider):
     """
     entropy of the saturation channel in HSV space
     """
+    if 3 != provider.img.ndim:
+        return None
+
     hsv = provider.as_hsv()
     if 3 == hsv.ndim:
         return _entropy_s(hsv)
@@ -133,6 +142,8 @@ def entropy_sv(provider):
     """
     entropy of the saturation and value channels in HSV space
     """
+    if 3 != provider.img.ndim:
+        return None
 
     hsv = provider.as_hsv()
     if 3 == hsv.ndim:
@@ -150,6 +161,9 @@ def entropy_ab(provider):
     """
     entropy of the AB channels in the LAB space
     """
+
+    if 3 != provider.img.ndim:
+        return None
 
     lab = provider.as_lab()
     if 3 == lab.ndim:
@@ -171,6 +185,10 @@ def emotion(provider):
 
     see: TODO
     """
+
+    if 3 != provider.img.ndim:
+        return None
+
     hsv = provider.as_hsv()
 
     sat = hsv[...,1].mean()
@@ -186,6 +204,10 @@ def naturalness(provider):
 
     see: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.108.2839&rep=rep1&type=pdf
     """
+
+    if 3 != provider.img.ndim:
+        return None
+
     hsv = provider.as_hsv()
 
     hue = hsv[...,0]

@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class RawFeatureExtractTests(unittest.TestCase):
 
     def setUp(self):
-        im = pkg_resources.resource_stream('tests', 'images/mona.jpg')
+        im = pkg_resources.resource_stream('tests', 'images/lena.jpg')
         self.provider = ImageProvider(im)
 
     def test_whratio(self):
@@ -87,7 +87,7 @@ class RawFeatureExtractTests(unittest.TestCase):
         logger.debug("entropy_v {}".format(result))
         assert_is_not_none(result)
 
-    def test_entropy_hv(self):
+    def test_entropy_sv(self):
 
         result = self.provider.extract('entropy_sv')
         logger.debug("entropy_sv {}".format(result))

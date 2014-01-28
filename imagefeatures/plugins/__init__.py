@@ -12,7 +12,7 @@ class FeaturePlugin:
         def inner(f):
             def wrapped(*args, **kwargs):              
                 value = f(*args, **kwargs)
-                if cons is not None:   
+                if cons is not None and value is not None:
                     return cons(*value)
                 else:
                     return value                
