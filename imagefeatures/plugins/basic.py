@@ -97,7 +97,7 @@ def colorfulness(provider):
     yb = 0.5 * ( r + g ) - b
 
     sd_rgyb = ( rg.std() ** 2 + yb.std() ** 2 ) ** 0.5
-    m_rgyb  = ( rg.mean() **2 + yb.mean() ** 2 ) ** 0.5
+    m_rgyb = ( rg.mean() **2 + yb.mean() ** 2 ) ** 0.5
 
     return sd_rgyb + 3.0 * m_rgyb
 
