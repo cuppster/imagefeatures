@@ -3,7 +3,7 @@ import numpy as np
 from numpy.core.fromnumeric import reshape
 from skimage.filter import sobel, hsobel, vsobel
 from skimage.feature import corner_harris, corner_subpix, corner_peaks
-from imagefeatures.plugins import FeaturePlugin
+from imagefeatures import FeaturePlugin
 
 @FeaturePlugin.register('whratio')
 def whratio(provider):

@@ -1,6 +1,5 @@
 import os
-import cv2
-from imagefeatures.plugins import FeaturePlugin
+from imagefeatures import FeaturePlugin
 
 
 class FaceDetect:
@@ -22,6 +21,8 @@ class FaceDetect:
 
     @staticmethod
     def detect_face( provider):
+
+        import cv2
 
         if FaceDetect._cascade is None:
             haar = os.path.join(os.path.dirname(__file__), 'haarcascade_frontalface_default.xml')
