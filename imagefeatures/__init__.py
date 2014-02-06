@@ -3,7 +3,7 @@ from skimage.color import rgb2hsv as skimage_rgb2hsv
 from skimage.color import rgb2lab as skimage_rgb2lab
 from skimage.color import rgb2gray as skimage_rgb2gray
 
-from plugins import FeaturePlugin
+from imagefeatures.plugins import FeaturePlugin
 
 class FeaturePatch:
     All, Portrait, BottomHalf, TopHalf, PortraitBackground, PortraitForeground, \
