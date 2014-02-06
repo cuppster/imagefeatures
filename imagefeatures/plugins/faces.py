@@ -1,5 +1,5 @@
 import os
-from imagefeatures import FeaturePlugin
+from imagefeatures.plugins import FeaturePlugin
 
 
 class FaceDetect:
