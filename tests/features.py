@@ -1,5 +1,3 @@
-
-
 import warnings
 warnings.filterwarnings("ignore",category=DeprecationWarning)
 
@@ -18,7 +16,7 @@ logger = logging.getLogger(__name__)
 class RawFeatureExtractTests(unittest.TestCase):
 
     def setUp(self):
-        im = pkg_resources.resource_stream('tests', 'images/lena.jpg')
+        im = pkg_resources.resource_stream('tests', 'images/mona.jpg')
         self.provider = ImageProvider(im)
 
     def test_whratio(self):
