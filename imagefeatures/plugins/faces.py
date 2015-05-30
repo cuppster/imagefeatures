@@ -33,6 +33,8 @@ class FaceDetect:
         # http://fideloper.com/facial-detection
         faces = FaceDetect._cascade.detectMultiScale(img, 1.2, 2, cv2.cv.CV_HAAR_SCALE_IMAGE)
 
+        # print "**", faces
+
         #if outfile is not None:
         #    if faces:
         #        for (x,y,w,h),n in faces:

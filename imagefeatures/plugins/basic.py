@@ -4,6 +4,11 @@ from numpy.core.fromnumeric import reshape
 from skimage.filter import sobel, hsobel, vsobel
 from skimage.feature import corner_harris, corner_subpix, corner_peaks
 from imagefeatures.plugins import FeaturePlugin
+from imagehash import dhash
+
+@FeaturePlugin.register('signature')
+def signature(provider):
+    return dhash(provider.as_pil())
 
 @FeaturePlugin.register('whratio')
 def whratio(provider):
