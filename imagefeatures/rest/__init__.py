@@ -5,16 +5,20 @@ Created on Thu Nov 29 11:16:17 2012
 @author: jason
 """
 
-import sys, os, io
+import sys, os, io, traceback
 from flask import Flask, make_response, render_template, request, g, Response
 import flask
 import sys
+import requests
 
 import time
 import cStringIO
 import random
 import numpy as np
 from bson.json_util import dumps
+
+from StringIO import StringIO
+from imageprovider import ImageProvider
 
 import logging
 logger = logging.getLogger(__name__)
@@ -25,10 +29,10 @@ FORMAT = '[%(levelname)s - %(asctime)s] %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 
 # features
-from imagefeatures.plugins.basic import Emotion, Naturalness
-from imagefeatures.plugins.emotions import OuEmotionType
-from imagefeatures.plugins.kobayashi import KobaType
-import imagefeatures.plugins.faces
+from plugins.basic import Emotion, Naturalness
+from plugins.emotions import OuEmotionType
+from plugins.kobayashi import KobaType
+import plugins.faces
 
 ALL_FEATURES = ['entropy', 'entropy_v', 'entropy_s',
                 'corners', 'colorfulness',
@@ -54,8 +58,6 @@ INDEX_FEATURES.extend(Emotion._fields)
 INDEX_FEATURES.extend(KobaType._fields)
 INDEX_FEATURES.extend(OuEmotionType._fields)
 
-
-
 # create flask app
 app = Flask(__name__, instance_relative_config=True, static_folder='static', static_url_path='/static')
 
@@ -69,7 +71,7 @@ def extract_from_image(provider, features, fail_on_error=True, return_provider=F
 
     for feature in features:
 
-        #print "TRYING", feature
+        print "TRYING", feature
 
         try:
 
@@ -88,6 +90,8 @@ def extract_from_image(provider, features, fail_on_error=True, return_provider=F
         except Exception as ex:
 
             if fail_on_error:
+                # logger.error(ex)
+                traceback.print_exc()
                 raise ex
             else:
                 logger.warn(ex)
@@ -116,7 +120,7 @@ def extract_from_image(provider, features, fail_on_error=True, return_provider=F
             else:
                 yield f, conv
 
-@app.route('/features', methods=['GET'])
+@app.route('/status', methods=['GET'])
 def status():
 
     return make_response("OK", 200)
@@ -125,9 +129,6 @@ def status():
 @app.route('/features', methods=['POST'])
 def extract_features():
 
-    import requests
-    from StringIO import StringIO
-    from imagefeatures import ImageProvider
     # from leo.match import SIGMatcher
     # from leo.images.extract import extract_from_image
     # from leo.features import ALL_FEATURES_AND_SIGNATURES
@@ -144,16 +145,29 @@ def extract_features():
     # r = requests.get(url)
 
     # get buffer/stream
-    data_stream = StringIO(request.data)
+    data_stream = None
+
+    # from URL or from image upload
+    if ('url' in request.args):
+        r = requests.get(request.args['url'])
+        data_stream = StringIO(r.content)
+    else:
+        data_stream = StringIO(request.data)
 
     # print data_stream
 
     # create provider
     p = ImageProvider(data_stream)
 
+    # dump image
+    # p.as_pil().save(r"/Users/jcupp/Projects/leo/imagefeatures/imagefeatures/foo.png")
+
     # get signature
     sig = p.extract('signature')
     whratio = p.extract('whratio')
+
+    print "sig = ", sig
+    print "whratio = ", whratio
 
     # look up title and artist name
     # matcher = SIGMatcher()

@@ -13,8 +13,6 @@ def segment(img):
     if 3 != img.ndim:
         return None
 
-
-
     # convert to lab
     #img_lab = rgb2lab(img)
 

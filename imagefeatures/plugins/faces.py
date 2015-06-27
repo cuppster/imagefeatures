@@ -1,5 +1,5 @@
 import os
-from imagefeatures.plugins import FeaturePlugin
+from plugins import FeaturePlugin
 
 
 class FaceDetect:
@@ -14,7 +14,7 @@ class FaceDetect:
     """
 
     _cascade = None
-  
+
     def __init__(self):
         pass
 
@@ -29,7 +29,7 @@ class FaceDetect:
             FaceDetect._cascade = cv2.CascadeClassifier(haar)
 
         img = provider.img
-          
+
         # http://fideloper.com/facial-detection
         faces = FaceDetect._cascade.detectMultiScale(img, 1.2, 2, cv2.cv.CV_HAAR_SCALE_IMAGE)
 

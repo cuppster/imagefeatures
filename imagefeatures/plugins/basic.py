@@ -3,7 +3,7 @@ import numpy as np
 from numpy.core.fromnumeric import reshape
 from skimage.filter import sobel, hsobel, vsobel
 from skimage.feature import corner_harris, corner_subpix, corner_peaks
-from imagefeatures.plugins import FeaturePlugin
+from plugins import FeaturePlugin
 from imagehash import dhash
 
 @FeaturePlugin.register('signature')
@@ -15,7 +15,7 @@ def whratio(provider):
     """
     width/height ratio
     """
-    
+
     # this works for RGB or GRAYSCALE
     ly, lx = provider.img.shape[:2]
     return 1.0 * lx / ly
@@ -294,6 +294,7 @@ def _entropy_rgb(img):
     http://stackoverflow.com/questions/5524179/how-to-detect-motion-between-two-pil-images-wxpython-webcam-integration-exampl
     """
     if 3 == img.ndim:
+        print "shape", img.shape
         pixels = reshape(img, (img.shape[0] * img.shape[1], 3))
         h,e = np.histogramdd(pixels, bins=(16,)*3, range=((0,256),)*3)
         prob = h/np.sum(h) # normalize

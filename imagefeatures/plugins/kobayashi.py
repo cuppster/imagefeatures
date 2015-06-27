@@ -1,11 +1,9 @@
 from collections import namedtuple
 from scipy.misc import imsave
-from imagefeatures import imageops
-
-from imagefeatures.plugins import FeaturePlugin
-from ..imageops import quantize
+from plugins import FeaturePlugin
+from imageops import quantize
 import numpy as np
-from ..hash import gen_signed_hash, unsigned2signed64
+from hash import gen_signed_hash, unsigned2signed64
 
 _code_book = [
 
@@ -185,7 +183,7 @@ def kyp3o(provider):
     quantize and return the colors sorted by most frequent
 
     """
-    result, h = imageops.quantize(provider.img, code_book, size=(100,100), density=False )
+    result, h = quantize(provider.img, code_book, size=(100,100), density=False )
 
     report = []
     for i, num in enumerate(h):
@@ -217,7 +215,7 @@ def kyp3(provider):
     """
     quantize and return the colors sorted by most frequent
     """
-    result, h = imageops.quantize(provider.img, code_book, size=(100,100), density=False )
+    result, h = quantize(provider.img, code_book, size=(100,100), density=False )
 
     report = []
     for i, num in enumerate(h):
@@ -250,7 +248,7 @@ def kyp2(provider):
     quantize and return the colors sorted by most frequent
 
     """
-    result, h = imageops.quantize(provider.img, code_book, size=(100,100), density=False )
+    result, h = quantize(provider.img, code_book, size=(100,100), density=False )
 
     report = []
     for i, num in enumerate(h):
@@ -292,7 +290,7 @@ def koba(provider):
 #            tolerance = 0.25
 
 
-        result, h = imageops.quantize(provider.img, code_book, size=(100,100), density=False )
+        result, h = quantize(provider.img, code_book, size=(100,100), density=False )
 
         #print "koba", result, h
 

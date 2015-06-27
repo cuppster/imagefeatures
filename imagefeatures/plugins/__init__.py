@@ -1,6 +1,5 @@
 from functools import wraps
 
-
 class FeaturePlugin:
     """
     Utility to register a function that operates on an image.

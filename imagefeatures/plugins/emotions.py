@@ -7,12 +7,12 @@ from skimage.color.colorconv import rgb2lab
 from skimage.filter import sobel, hsobel, vsobel
 from skimage.feature import corner_harris, corner_subpix, corner_peaks
 from skimage.segmentation import quickshift
-from imagefeatures.plugins import FeaturePlugin
+from plugins import FeaturePlugin
 import numpy as np
 import numpy.ma as ma
 
 import math
-from ..imageops import segment
+from imageops import segment
 
 
 def _out_harmony(lab1, lab2):
